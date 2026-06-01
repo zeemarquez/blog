@@ -1,0 +1,122 @@
+---
+title: 'Blockchain, what is it?'
+description: 'A visual and interactive explanation of what a blockchain is, how it works, and what makes it secure — no programming knowledge required.'
+pubDate: 'Nov 28 2022'
+---
+
+In this post I try to explain what a blockchain is in the simplest, most visual way possible. It is not necessary to have knowledge of programming or cryptography to understand how a blockchain works. If you want to go into more detail, I have another [post](/blog/make-your-own-blockchain) explaining how to program a blockchain in Python from scratch.
+
+## Introduction
+
+Wikipedia defines blockchain as: "a label that through a data structure whose information is grouped into sets (blocks) to which meta-information related to another block of the previous chain is added in a time line to make a secure follow-up through large cryptographic computations." But what does all this mean?
+
+The word blockchain comes from the junction of "blocks" and "chain". But what are these "blocks"? And why are they "chained"?
+
+When we talk about a chain of blocks, we are referring to a series of objects, or blocks, that contain certain information, but they are not a group of objects without a relationship between them — rather each object refers to the previous one. Imagine for example a book: we can define a book as a chain of pages or "page-chain", and the book only makes sense if the pages are ordered correctly.
+
+![Diagram of a blockchain as a chain of blocks](/images/blog/blockchain-what-is-it/diagram_blockchain0.png)
+
+In a blockchain each block is like a page of a book that references the previous page. But what is this useful for?
+
+## What is a blockchain for?
+
+To understand the usefulness of a blockchain, we first have to understand the differences between a centralized and decentralized network. A centralized network depends on a central entity, and the rest of the participants of that network trust the central node to supervise the correct functioning of the network. An example of a centralized network would be a group of friends who trust a notary (or central node) to keep the accounts of the group. Every expense they make is communicated to the notary and he is in charge of keeping the balance of group expenses. This system fails if the group cannot trust the notary to keep the accounts.
+
+There are many cases in which you should not trust a person or entity to handle data, contracts or money. A decentralized network is a solution to this problem of mistrust, since in a decentralized network all the participants are in charge of supervising the network and no one can have more power than the rest; the decision-making power is divided among all the participants.
+
+![Centralized vs decentralized network](/images/blog/blockchain-what-is-it/decentralized.png)
+
+A blockchain is a tool that allows the creation of a decentralized network in which everyone can trust the veracity of the information recorded, even if no one trusts anyone. A blockchain records immutable and sequential information.
+
+Let's imagine the case of a group of friends (Alicia, Juan and Pedro) who want to keep track of their trip accounts. For this they have bought a common notebook and on each page they write down each expense. If everyone in the group trusts everyone, that's great, but what if they can't trust each other? One of them could change the spending on one of the pages and thus steal money from the rest.
+
+The solution is to "decentralize" the notebook — that everyone has an exact copy. But a priori this doesn't seem to solve anything: how do we know if someone has modified their copy? We could make the pages immutable, writing on them with a pen, but in the digital world everything can be modified without leaving a trace.
+
+What we can do is link the pages in such a way that when one small detail of a page is modified, the notebook no longer makes sense. This can be achieved by having the information on each page encoded on the next page. For example, we write down the initial of the person and the amount of the expense of the previous page at the bottom of each page, and we chain these codes. If someone modifies any page, the codes that link the pages won't match.
+
+![Chained notebook pages](/images/blog/blockchain-what-is-it/diagram_notebook.png)
+
+If Pedro decides to modify page 2 of his notebook and writes down `85€` instead of `15€`, then the code noted on page 3: `"A20P15"` does not match — it should be `"A20P85"`. This way we can verify that someone has modified page 2. So every time we add a new page we verify the notebooks, and by voting the notebooks of Alicia and Juan are chosen to be part of the "official notebook".
+
+![Voting to decide the official notebook](/images/blog/blockchain-what-is-it/voting.png)
+
+But there are still problems. Anyone can modify a notebook page and also modify all subsequent codes to validate the notebook — and nobody would suspect. This is solved by making it **very expensive** to modify the code of each page. We can require each page code to be the solution to a difficult mathematical equation. Solving this takes time — this is what is commonly called [proof-of-work](https://en.wikipedia.org/wiki/Proof_of_work): to add a new page you must show that you have done an amount of work that would make it practically impossible to modify all the pages in a reasonable time.
+
+Another problem is that anyone can impersonate another person. So we need a way to "sign" pages in such a way that it can be verified that each expense was recorded by the right person.
+
+And finally, the code linking the pages grows bigger with each page — we need some way to keep all codes the same size.
+
+To solve all these problems we use cryptography, and this is where the word "cryptocurrency" comes from.
+
+## Crypto
+
+Cryptography allows us to encrypt information or sign data using mathematical algorithms. This is what makes blockchains so reliable. The two most important cryptographic tools in any blockchain are the **hash function** and the **digital signature**.
+
+### Hash function
+
+The [hash function](https://en.wikipedia.org/wiki/Hash_function) is one of the most important cryptographic tools and is essential to create a blockchain. Although the inner workings of a hash function can be very complicated, the concept is quite simple: it is a function that converts an input (the word "hello" for example) into an output that appears random, although it is deterministic.
+
+![Hash function diagram](/images/blog/blockchain-what-is-it/hash.png)
+
+What makes the hash function so useful is that it always returns a result of the same size. There are many different types of hash algorithms; one of the most used is [SHA-256](https://en.wikipedia.org/wiki/SHA-2), which always returns 256 bits. It doesn't matter if the input is the letter "a" or the entire Don Quixote — the result is always 256 bits.
+
+The hash function is **chaotic**: a tiny change in the input (for example, capitalizing "h") causes a completely different result. It is important to distinguish chaotic from random — the hash function is not random, it is deterministic: it will always return the same output for the same input.
+
+Another characteristic: it is practically impossible to deduce the input from the output. The only way to know what result an input will give is by performing the hash function on that input.
+
+If you remember the problems mentioned before, the hash function solves one of them: encoding the information of each page (or block) in a unique, deterministic way with a fixed size. In this way the blocks are "chained" because each block contains the hash of the previous block. Since the hash of the previous block is included to obtain the hash of the subsequent block, changing a single number causes radical changes to all the hashes of subsequent blocks.
+
+![Blockchain diagram with hashes](/images/blog/blockchain-what-is-it/diagram_blockchain1.png)
+
+The hash function also allows implementing proof of work. To add a new block, we can require that the hash of each block start with `"0000"`. Since it is impossible to know which input will result in a hash beginning with `"0000"`, the only way is to try and test until you succeed. This process requires computation and time.
+
+For example, using `"hello"` as the base input, we test `"hello_0"`, `"hello_1"`, `"hello_2"`... Eventually, `"hello_167537"` gives a hash that starts with 4 zeros:
+
+> `0000c24a5157df9c08de36972e30404e463b1e76bbb25007395d455b9494ad77`
+
+### Digital signature
+
+The digital signature, like a real signature, allows us to mark information in such a way that anyone can verify it was created by a specific person. Without this tool, a cryptocurrency could not function since any member of the blockchain could impersonate another person.
+
+What is a signature? It is nothing more than modifying a document with a mark that only the person who signs can make. But how can someone verify the signature is real? This is where **asymmetric encryption** comes in.
+
+Normal door locks are a type of symmetrical "encryption": the same key closes and opens the door. In asymmetric encryption there are two keys — one that closes and another that opens. This asymmetry is extremely useful for digital signatures.
+
+![Asymmetric encryption / digital signature animation](/images/blog/blockchain-what-is-it/digital_signature.gif)
+
+In a digital signature:
+- The **closing key** is the **private key** (only you have it)
+- The **opening key** is the **public key** (anyone can see it)
+
+The public key is generated from the private key, but it is impossible to know the private key knowing only the public one.
+
+Let's say Alice has a public/private key pair and wants to sign a letter. She encrypts the letter with her private key and sends it to Juan. The letter can only be opened with Alice's public key — so Juan opens it with her public key and knows it was encrypted by Alice, without ever needing to know her private key.
+
+## What does this have to do with Bitcoin?
+
+If you've made it this far, you already understand what Bitcoin is. **Bitcoin is nothing more than a blockchain in which the information in each block is a series of transactions.** It is a shared notebook in which transactions are recorded on each page. When someone says they have X bitcoins, those bitcoins are the result of searching the Bitcoin "notebook" for all transactions involving that address and summing the received minus the sent amounts.
+
+The public key is the wallet address, and the private key is what allows you to sign transactions as the sender. If you lose your Bitcoin private key, you lose the ability to spend those bitcoins forever — there is no "boss" and nobody can help you.
+
+![Bitcoin blockchain diagram](/images/blog/blockchain-what-is-it/bitcoin_diagram.png)
+
+**Mining** is the same as proof of work. Bitcoin miners are nodes that keep a copy of the Bitcoin blockchain and use powerful computers to solve the proof of work. When you make a Bitcoin transaction, it is sent to all miners. They compete to solve the proof of work and the first to succeed gets to add the new block. The current mining difficulty is set so that a new block takes approximately 10 minutes to mine.
+
+When a new block is mined, the miner receives a reward. All existing bitcoins come from these mining rewards. Bitcoin's supply is algorithmically designed to be halved every 210,000 blocks (~4 years), making it a currency with a known and limited supply. There will only ever be 21 million bitcoins (around 19 million are currently in circulation).
+
+Bitcoin is pseudo-anonymous: all transactions are public and [traceable](https://blockstream.info/) by anyone, but it is impossible to know who in the real world owns each Bitcoin address.
+
+## Observations
+
+Of course I have left out some details (such as transaction fees or the double-spend problem) — it's not said for nothing that Satoshi Nakamoto was a genius. The very story of the creation of Bitcoin and the mystery of Satoshi Nakamoto would make for a movie. Creating a blockchain is very complex and there are many problems that are not easy to solve.
+
+It should also be remembered that **a blockchain is not the same as a cryptocurrency**. A blockchain is nothing more than the tool used by decentralized cryptocurrencies such as Bitcoin, Ethereum, Cardano... But a blockchain can be used for many other applications such as smart contracts, wills, product tracking, academic certificates, and even decentralized democratic systems.
+
+The possibilities of blockchains are endless and it is a world that is only beginning.
+
+## Further reading
+
+- Satoshi Nakamoto, *Bitcoin Whitepaper* — <https://bitcoin.org/bitcoin.pdf>
+- Simply Explained, *How does a blockchain work* — <https://www.youtube.com/watch?v=SSo_EIwHSd4>
+- Computerphile, *Public Key Cryptography* — <https://www.youtube.com/watch?v=GSIDS_lvRv4>
+- Computerphile, *What are Digital Signatures?* — <https://www.youtube.com/watch?v=s22eJ1eVLTU>

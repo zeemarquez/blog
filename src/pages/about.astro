@@ -1,0 +1,71 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import { Icon } from 'astro-icon/components'
+---
+
+<BaseLayout title="About — Zee Marquez" description="About Zee Marquez — engineer, developer, and writer.">
+	<main class="app-container pt-36">
+		<h1 class="text-6xl pb-2 font-bold">About Me</h1>
+	</main>
+	<section class="app-container py-12 mb-8">
+		<div
+			class="prose prose-neutral prose-lg md:prose-xl dark:prose-invert prose-img:rounded-xl prose-figure:text-center prose-img:mx-auto"
+		>
+			<p>
+				Hey, I'm <strong>Zee Marquez</strong> — an engineer and developer with a
+				passion for understanding how things work, then building them from scratch.
+				My interests span structural simulation, cryptography, machine learning,
+				and full-stack web development.
+			</p>
+			<p>
+				I started this blog to share technical deep-dives on topics I find
+				fascinating: blockchains, the finite element method, and whatever rabbit
+				hole I'm currently in. Every post tries to be as visual and hands-on as
+				possible.
+			</p>
+
+			<h2>Skills</h2>
+			<ul>
+				<li><strong>Languages:</strong> Python, TypeScript, JavaScript, C++</li>
+				<li><strong>Web:</strong> Astro, React, Node.js, Tailwind CSS</li>
+				<li><strong>Engineering:</strong> FEM, numerical methods, data analysis</li>
+				<li><strong>Tools:</strong> Git, Docker, Linux</li>
+			</ul>
+
+			<h2>Experience</h2>
+			<p>
+				<em>Update this section with your work experience.</em>
+			</p>
+
+			<h2>Education</h2>
+			<p>
+				<em>Update this section with your academic background.</em>
+			</p>
+
+			<h2>CV / Resume</h2>
+			<p>
+				You can download my CV below. Place your <code>cv.pdf</code> in the <code>public/</code> folder to enable the download.
+			</p>
+		</div>
+
+		<div class="flex flex-wrap gap-4 mt-8">
+			<a
+				class="btn-primary"
+				href="/cv.pdf"
+				download
+				target="_blank"
+			>
+				Download CV
+				<Icon height={20} name="mdi:arrow-collapse-down" />
+			</a>
+			<a
+				class="btn-secondary"
+				href="mailto:hello@zeemarquez.dev"
+				target="_blank"
+			>
+				Get in touch
+				<Icon height={20} name="mdi:email" />
+			</a>
+		</div>
+	</section>
+</BaseLayout>
