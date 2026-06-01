@@ -38,13 +38,13 @@ What we can do is link the pages in such a way that when one small detail of a p
 
 ![Chained notebook pages](/images/blog/blockchain-what-is-it/diagram_notebook.png)
 
-If Pedro decides to modify page 2 of his notebook and writes down `85€` instead of `15€`, then the code noted on page 3: `"A20P15"` does not match — it should be `"A20P85"`. This way we can verify that someone has modified page 2. So every time we add a new page we verify the notebooks, and by voting the notebooks of Alicia and Juan are chosen to be part of the "official notebook".
+If Pedro decides to modify page 2 of his notebook and writes down `85€` instead of `15€`, then the code noted on page 3: `A20P15` does not match — it should be `A20P85`. This way we can verify that someone has modified page 2. So every time we add a new page we verify the notebooks, and by voting the notebooks of Alicia and Juan are chosen to be part of the official notebook.
 
 ![Voting to decide the official notebook](/images/blog/blockchain-what-is-it/voting.png)
 
 But there are still problems. Anyone can modify a notebook page and also modify all subsequent codes to validate the notebook — and nobody would suspect. This is solved by making it **very expensive** to modify the code of each page. We can require each page code to be the solution to a difficult mathematical equation. Solving this takes time — this is what is commonly called [proof-of-work](https://en.wikipedia.org/wiki/Proof_of_work): to add a new page you must show that you have done an amount of work that would make it practically impossible to modify all the pages in a reasonable time.
 
-Another problem is that anyone can impersonate another person. So we need a way to "sign" pages in such a way that it can be verified that each expense was recorded by the right person.
+Another problem is that anyone can impersonate another person. So we need a way to sign pages in such a way that it can be verified that each expense was recorded by the right person.
 
 And finally, the code linking the pages grows bigger with each page — we need some way to keep all codes the same size.
 
@@ -70,9 +70,9 @@ If you remember the problems mentioned before, the hash function solves one of t
 
 ![Blockchain diagram with hashes](/images/blog/blockchain-what-is-it/diagram_blockchain1.png)
 
-The hash function also allows implementing proof of work. To add a new block, we can require that the hash of each block start with `"0000"`. Since it is impossible to know which input will result in a hash beginning with `"0000"`, the only way is to try and test until you succeed. This process requires computation and time.
+The hash function also allows implementing proof of work. To add a new block, we can require that the hash of each block start with `0000`. Since it is impossible to know which input will result in a hash beginning with `0000`, the only way is to try and test until you succeed. This process requires computation and time.
 
-For example, using `"hello"` as the base input, we test `"hello_0"`, `"hello_1"`, `"hello_2"`... Eventually, `"hello_167537"` gives a hash that starts with 4 zeros:
+For example, using `hello` as the base input, we test `hello_0`, `hello_1`, `hello_2`... Eventually, `hello_32999` gives a hash that starts with 4 zeros:
 
 <HashDemo />
 
