@@ -1,0 +1,249 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import { Icon } from 'astro-icon/components'
+import { projects, getProjectBySlug } from '../../data/projects'
+
+export function getStaticPaths() {
+	return projects.map((project) => ({
+		params: { slug: project.slug },
+		props: { project },
+	}))
+}
+
+const { project } = Astro.props
+---
+
+<BaseLayout
+	title={`${project.title} — Zee Marquez`}
+	description={project.description}
+>
+	<!-- Back link -->
+	<div class="app-container pt-28 pb-0">
+		<a
+			href="/projects"
+			class="inline-flex items-center gap-1.5 text-sm opacity-60 hover:opacity-100 transition-opacity"
+		>
+			<Icon name="mdi:arrow-left" size={16} />
+			All projects
+		</a>
+	</div>
+
+	<!-- Hero -->
+	<main class="app-container pt-6 pb-8">
+		<div class="max-w-3xl">
+			<p class="text-base opacity-60 mb-2">{project.subtitle}</p>
+			<h1 class="text-5xl sm:text-6xl font-bold leading-tight">{project.title}</h1>
+
+			<!-- Tags -->
+			<div class="flex flex-wrap gap-2 mt-6">
+				{
+					project.tags.map((tag) => (
+						<span class="text-sm px-3 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800">
+							{tag}
+						</span>
+					))
+				}
+				{project.year && <span class="text-sm px-3 py-1 rounded-full opacity-50">{project.year}</span>}
+			</div>
+
+			<!-- Action buttons -->
+			{
+				(project.link || project.github) && (
+					<div class="flex flex-wrap gap-3 mt-8">
+						{project.link && (
+							<a
+								href={project.link}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="btn-primary"
+							>
+								Visit project
+								<Icon height={18} name="mdi:open-in-new" />
+							</a>
+						)}
+						{project.github && (
+							<a
+								href={project.github}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="btn-secondary"
+							>
+								View on GitHub
+								<Icon height={18} name="mdi:github" />
+							</a>
+						)}
+					</div>
+				)
+			}
+		</div>
+	</main>
+
+	<!-- Image gallery -->
+	{
+		project.images.length > 0 && (
+			<section class="app-container pb-12">
+				{project.images.length === 1 ? (
+					<div class="rounded-2xl overflow-hidden border border-neutral-200 dark:border-neutral-800 max-w-4xl">
+						<img
+							src={project.images[0]}
+							alt={`${project.title} screenshot`}
+							class="w-full object-cover object-top"
+						/>
+					</div>
+				) : (
+					<div class="space-y-4 max-w-4xl" data-gallery>
+						{/* Main viewer */}
+						<div class="relative rounded-2xl overflow-hidden border border-neutral-200 dark:border-neutral-800 aspect-video bg-neutral-100 dark:bg-neutral-900">
+							{project.images.map((src, i) => (
+								<img
+									src={src}
+									alt={`${project.title} screenshot ${i + 1}`}
+									class="absolute inset-0 w-full h-full object-cover object-top transition-opacity duration-500"
+									data-gallery-slide={i}
+									style={i === 0 ? 'opacity:1' : 'opacity:0'}
+								/>
+							))}
+							{/* Nav arrows */}
+							<button
+								data-gallery-prev
+								class="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center transition-colors z-10"
+								aria-label="Previous image"
+							>
+								<Icon name="mdi:chevron-left" size={22} />
+							</button>
+							<button
+								data-gallery-next
+								class="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center transition-colors z-10"
+								aria-label="Next image"
+							>
+								<Icon name="mdi:chevron-right" size={22} />
+							</button>
+							{/* Counter */}
+							<span
+								data-gallery-counter
+								class="absolute bottom-3 right-3 text-xs text-white bg-black/40 rounded-full px-2.5 py-1 z-10"
+							>
+								1 / {project.images.length}
+							</span>
+						</div>
+
+						{/* Thumbnails */}
+						<div class="flex gap-3 overflow-x-auto pb-1">
+							{project.images.map((src, i) => (
+								<button
+									data-gallery-thumb={i}
+									class="shrink-0 w-24 h-16 rounded-lg overflow-hidden border-2 transition-colors"
+									style={i === 0 ? 'border-color:var(--color-primary)' : 'border-color:transparent; opacity:0.6'}
+								>
+									<img
+										src={src}
+										alt={`Thumbnail ${i + 1}`}
+										class="w-full h-full object-cover object-top"
+										loading="lazy"
+									/>
+								</button>
+							))}
+						</div>
+					</div>
+				)}
+			</section>
+		)
+	}
+
+	<!-- Content sections -->
+	<section class="app-container pb-20">
+		<div class="max-w-3xl space-y-10">
+			{
+				project.sections.map((section) => (
+					<div>
+						<h2 class="text-2xl font-semibold mb-3">{section.heading}</h2>
+						<p
+							class="text-lg opacity-80 leading-relaxed prose prose-neutral dark:prose-invert max-w-none"
+							set:html={section.body.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}
+						/>
+					</div>
+				))
+			}
+		</div>
+
+		<!-- Bottom CTA -->
+		{
+			(project.link || project.github) && (
+				<div class="max-w-3xl mt-14 pt-10 border-t border-neutral-200 dark:border-neutral-800 flex flex-wrap gap-3">
+					{project.link && (
+						<a
+							href={project.link}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="btn-primary"
+						>
+							Visit project
+							<Icon height={18} name="mdi:open-in-new" />
+						</a>
+					)}
+					{project.github && (
+						<a
+							href={project.github}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="btn-secondary"
+						>
+							View on GitHub
+							<Icon height={18} name="mdi:github" />
+						</a>
+					)}
+					<a href="/projects" class="btn-secondary">
+						<Icon height={18} name="mdi:arrow-left" />
+						Back to projects
+					</a>
+				</div>
+			)
+		}
+	</section>
+</BaseLayout>
+
+<script>
+	function initGallery() {
+		document.querySelectorAll<HTMLElement>('[data-gallery]').forEach((gallery) => {
+			const slides = gallery.querySelectorAll<HTMLElement>('[data-gallery-slide]')
+			const thumbs = gallery.querySelectorAll<HTMLButtonElement>('[data-gallery-thumb]')
+			const counter = gallery.querySelector<HTMLElement>('[data-gallery-counter]')
+			const prevBtn = gallery.querySelector<HTMLButtonElement>('[data-gallery-prev]')
+			const nextBtn = gallery.querySelector<HTMLButtonElement>('[data-gallery-next]')
+			const total = slides.length
+
+			let current = 0
+
+			function goTo(index: number) {
+				slides[current].style.opacity = '0'
+				thumbs[current].style.borderColor = 'transparent'
+				thumbs[current].style.opacity = '0.6'
+
+				current = (index + total) % total
+
+				slides[current].style.opacity = '1'
+				thumbs[current].style.borderColor = 'var(--color-primary, #4f46e5)'
+				thumbs[current].style.opacity = '1'
+
+				if (counter) counter.textContent = `${current + 1} / ${total}`
+			}
+
+			prevBtn?.addEventListener('click', () => goTo(current - 1))
+			nextBtn?.addEventListener('click', () => goTo(current + 1))
+
+			thumbs.forEach((thumb, i) => {
+				thumb.addEventListener('click', () => goTo(i))
+			})
+
+			// Keyboard navigation when gallery is focused
+			gallery.setAttribute('tabindex', '0')
+			gallery.addEventListener('keydown', (e: KeyboardEvent) => {
+				if (e.key === 'ArrowLeft') goTo(current - 1)
+				if (e.key === 'ArrowRight') goTo(current + 1)
+			})
+		})
+	}
+
+	initGallery()
+	document.addEventListener('astro:page-load', initGallery)
+</script>
