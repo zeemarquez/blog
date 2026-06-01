@@ -1,0 +1,63 @@
+---
+---
+
+<div class="hash-demo not-prose my-8 rounded-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden text-base">
+
+  <!-- Input row -->
+  <div class="flex items-center gap-3 px-4 py-3 bg-neutral-50 dark:bg-neutral-900">
+    <span class="text-xs font-semibold uppercase tracking-widest opacity-50 shrink-0 w-14">Input</span>
+    <input
+      type="text"
+      class="hash-input grow bg-transparent font-mono text-sm focus:outline-none placeholder:opacity-40"
+      placeholder="hello"
+      autocomplete="off"
+      spellcheck="false"
+    />
+  </div>
+
+  <!-- Output row -->
+  <div class="flex items-start gap-3 px-4 py-3 border-t border-neutral-200 dark:border-neutral-700">
+    <span class="text-xs font-semibold uppercase tracking-widest opacity-50 shrink-0 w-14 pt-0.5">SHA-256</span>
+    <p class="hash-output font-mono text-sm break-all leading-relaxed opacity-80"></p>
+  </div>
+
+</div>
+
+<script>
+  async function sha256(msg: string): Promise<string> {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg))
+    return Array.from(new Uint8Array(buf))
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('')
+  }
+
+  function renderHash(hash: string, output: Element) {
+    // Highlight leading zeros in the theme accent colour
+    const leadingZeros = hash.match(/^(0*)([\s\S]*)/)!
+    const zeros = leadingZeros[1]
+    const rest  = leadingZeros[2]
+    output.innerHTML = zeros.length
+      ? `<span class="hash-zeros font-bold">${zeros}</span>${rest}`
+      : hash
+  }
+
+  document.querySelectorAll<HTMLElement>('.hash-demo').forEach((demo) => {
+    const input  = demo.querySelector<HTMLInputElement>('.hash-input')!
+    const output = demo.querySelector<HTMLElement>('.hash-output')!
+
+    async function update() {
+      const hash = await sha256(input.value || 'hello')
+      renderHash(hash, output)
+    }
+
+    input.addEventListener('input', update)
+    input.value = 'hello'
+    update()
+  })
+</script>
+
+<style>
+  /* Leading zeros inherit the site primary accent colour */
+  :root .hash-zeros          { color: #2563eb; }
+  :root.dark .hash-zeros     { color: #60a5fa; }
+</style>

@@ -4,6 +4,8 @@ description: 'A visual and interactive explanation of what a blockchain is, how 
 pubDate: 'Nov 28 2022'
 ---
 
+import HashDemo from '../../components/HashDemo.astro'
+
 In this post I try to explain what a blockchain is in the simplest, most visual way possible. It is not necessary to have knowledge of programming or cryptography to understand how a blockchain works. If you want to go into more detail, I have another [post](/blog/make-your-own-blockchain) explaining how to program a blockchain in Python from scratch.
 
 ## Introduction
@@ -72,7 +74,7 @@ The hash function also allows implementing proof of work. To add a new block, we
 
 For example, using `"hello"` as the base input, we test `"hello_0"`, `"hello_1"`, `"hello_2"`... Eventually, `"hello_167537"` gives a hash that starts with 4 zeros:
 
-> `0000c24a5157df9c08de36972e30404e463b1e76bbb25007395d455b9494ad77`
+<HashDemo />
 
 ### Digital signature
 
@@ -116,7 +118,7 @@ The possibilities of blockchains are endless and it is a world that is only begi
 
 ## Further reading
 
-- Satoshi Nakamoto, *Bitcoin Whitepaper* — <https://bitcoin.org/bitcoin.pdf>
-- Simply Explained, *How does a blockchain work* — <https://www.youtube.com/watch?v=SSo_EIwHSd4>
-- Computerphile, *Public Key Cryptography* — <https://www.youtube.com/watch?v=GSIDS_lvRv4>
-- Computerphile, *What are Digital Signatures?* — <https://www.youtube.com/watch?v=s22eJ1eVLTU>
+- Satoshi Nakamoto, *Bitcoin Whitepaper* — [bitcoin.org/bitcoin.pdf](https://bitcoin.org/bitcoin.pdf)
+- Simply Explained, *How does a blockchain work* — [youtube.com](https://www.youtube.com/watch?v=SSo_EIwHSd4)
+- Computerphile, *Public Key Cryptography* — [youtube.com](https://www.youtube.com/watch?v=GSIDS_lvRv4)
+- Computerphile, *What are Digital Signatures?* — [youtube.com](https://www.youtube.com/watch?v=s22eJ1eVLTU)
