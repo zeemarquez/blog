@@ -3,7 +3,7 @@
 
 export const SITE_TITLE = 'Zee Marquez'
 export const SITE_DESCRIPTION =
-	'Personal portfolio, blog, and projects by Zee Marquez — software, engineering, and more.'
+	'Zee Marquez — mechanical engineer, renewable energy specialist, AI builder, and project finance student. Portfolio, blog, and projects.'
 
 // If you deploy to a subdirectory, set the `WEBSITE_BASE` here.
 // e.g. '/blog' if you are deploying to example.com/blog

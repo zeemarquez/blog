@@ -3,55 +3,111 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 import { Icon } from 'astro-icon/components'
 ---
 
-<BaseLayout title="About — Zee Marquez" description="About Zee Marquez — engineer, developer, and writer.">
-	<main class="app-container pt-36">
+<BaseLayout
+	title="About — Zee Marquez"
+	description="Zee Marquez — mechanical engineer, renewable energy specialist, AI builder, and finance student. Bridging hard engineering, intelligent systems, and project finance."
+>
+	<main class="app-container pt-36 pb-4">
 		<h1 class="text-6xl pb-2 font-bold">About Me</h1>
 	</main>
-	<section class="app-container py-12 mb-8">
-		<div
-			class="prose prose-neutral prose-lg md:prose-xl dark:prose-invert prose-img:rounded-xl prose-figure:text-center prose-img:mx-auto"
-		>
+
+	<section class="app-container py-8 mb-4">
+		<div class="prose prose-neutral prose-lg md:prose-xl dark:prose-invert prose-img:rounded-xl prose-figure:text-center prose-img:mx-auto max-w-3xl">
+
 			<p>
-				Hey, I'm <strong>Zee Marquez</strong> — an engineer and developer with a
-				passion for understanding how things work, then building them from scratch.
-				My interests span structural simulation, cryptography, machine learning,
-				and full-stack web development.
+				I'm <strong>Zee Marquez</strong> — a Mechanical Engineer who has spent the last few
+				years at the crossroads of <strong>renewable energy, intelligent systems, and software</strong>.
+				I build things end-to-end: from structural FEM analysis and PCB design to ML pipelines,
+				cloud infrastructure, and full-stack applications. Right now I'm adding a new layer —
+				studying <strong>Project Finance and M&amp;A</strong> to understand how the deals that
+				fund the energy transition actually work.
 			</p>
 			<p>
-				I started this blog to share technical deep-dives on topics I find
-				fascinating: blockchains, the finite element method, and whatever rabbit
-				hole I'm currently in. Every post tries to be as visual and hands-on as
-				possible.
+				The common thread is the energy sector. I've done structural consulting on solar
+				trackers and wind towers, launched an award-winning IoT startup for solar PV predictive
+				maintenance, and built data tools and dashboards for renewable energy analysis. I find it
+				fascinating to operate across the full stack of a problem: the physics, the code, and
+				now the capital.
+			</p>
+			<p>
+				Outside of work I write on this blog about the technical rabbit holes I fall into —
+				blockchains, finite element methods, AI — and I build personal projects that scratch
+				whatever itch I have at the time.
 			</p>
 
-			<h2>Skills</h2>
+			<!-- Experience -->
+			<h2>Experience</h2>
+
+			<h3>Technical Manager — Vulkano Engineering <span class="font-normal opacity-60 text-base">· Madrid &nbsp;·&nbsp; Nov 2023 – Present</span></h3>
 			<ul>
-				<li><strong>Languages:</strong> Python, TypeScript, JavaScript, C++</li>
-				<li><strong>Web:</strong> Astro, React, Node.js, Tailwind CSS</li>
-				<li><strong>Engineering:</strong> FEM, numerical methods, data analysis</li>
-				<li><strong>Tools:</strong> Git, Docker, Linux</li>
+				<li>Structural consulting on solar tracker and photovoltaic structures — detailed structural and frequency analysis to ensure design integrity under static and dynamic loads.</li>
+				<li>Wind load analysis on solar panels and trackers, optimising for aerodynamic stability and material efficiency.</li>
+				<li>Designed and delivered <strong>STOWAI</strong> end-to-end — from hardware concept and IoT sensor electronics to cloud deployment — in under 4 months. Secured awards from Actua UPM, CAM, Wayra, and La Caixa.</li>
+				<li>Built client-facing real-time dashboards for asset performance monitoring.</li>
+				<li>Registered utility model <strong>ES1315071U</strong> for a self-powered mechanical monitoring and predictive maintenance device.</li>
 			</ul>
 
-			<h2>Experience</h2>
-			<p>
-				<em>Update this section with your work experience.</em>
-			</p>
+			<h3>Structural Engineer — GRI · Gestamp Renewable Industries <span class="font-normal opacity-60 text-base">· Madrid &nbsp;·&nbsp; Jan 2023 – Oct 2023</span></h3>
+			<ul>
+				<li>Reduced manufacturing material costs by <strong>10%</strong> by implementing topology optimisation algorithms within FEM-based parametric tools for wind tower design.</li>
+				<li>Migrated legacy FEM/CFD workflows to open-source alternatives, cutting licensing costs and improving automation.</li>
+				<li>Resolved critical manufacturing discrepancies using targeted FEM simulations.</li>
+			</ul>
 
+			<h3>Software & Control Engineering Intern — +D (masdediagram) <span class="font-normal opacity-60 text-base">· Madrid &nbsp;·&nbsp; Jun 2019 – Jan 2021</span></h3>
+			<ul>
+				<li>Programmed PLCs and developed software for crash testing and certification machines.</li>
+				<li>Designed and assembled industrial automation control systems.</li>
+			</ul>
+
+			<!-- Education -->
 			<h2>Education</h2>
+
+			<h3>Project Finance and M&amp;A Master — ISBIF <span class="font-normal opacity-60 text-base">· Jan 2026 – Present</span></h3>
 			<p>
-				<em>Update this section with your academic background.</em>
+				Covering project finance structuring, leveraged buyouts, infrastructure financing,
+				and M&amp;A deal mechanics — with a focus on the energy and infrastructure sectors.
 			</p>
 
-			<h2>CV / Resume</h2>
-			<p>
-				You can download my CV below. Place your <code>cv.pdf</code> in the <code>public/</code> folder to enable the download.
-			</p>
+			<h3>BSc Mechanical Engineering (English) — Universidad Carlos III de Madrid <span class="font-normal opacity-60 text-base">· 2018 – 2022</span></h3>
+			<ul>
+				<li>Exchange semesters at Case Western Reserve University and California State University Long Beach (USA) — 4.0 GPA.</li>
+				<li>Honors in Physics and Python programming.</li>
+				<li>University Moto-Student Team: designed sensorisation and data acquisition systems for racing motorcycles.</li>
+			</ul>
+
+			<!-- Skills -->
+			<h2>Skills</h2>
+
+			<h3>Energy &amp; Engineering</h3>
+			<p>Finite Element Method (Abaqus, HyperWorks, ANSYS, CALCULIX), CFD (OpenFoam, Fluent), structural analysis (SAP, Revit), CAD (SolidWorks, CATIA, FreeCAD), topology optimisation, fatigue life prediction, wind load analysis, Eurocodes, DNV compliance.</p>
+
+			<h3>Software, AI &amp; Data</h3>
+			<p>Python, C#, C++, MATLAB · AI/ML model development, predictive maintenance algorithms, NLP, deep learning · Backend (FastAPI, Django, GraphQL) · Cloud (AWS, GCP, Azure, Firebase) · Databases (PostgreSQL, InfluxDB, MongoDB) · Visualisation (Power BI, Grafana, Dash, Streamlit).</p>
+
+			<h3>IoT &amp; Hardware</h3>
+			<p>End-to-end IoT architecture, Raspberry Pi, Arduino, PCB design, low-power sensor networks (MQTT, LoRA, OpenThread).</p>
+
+			<h3>Finance &amp; Strategy</h3>
+			<p>Project finance, infrastructure M&amp;A, financial modelling · Product lifecycle management, technology roadmapping, Agile project management, stakeholder communication.</p>
+
+			<!-- Accomplishments -->
+			<h2>Accomplishments &amp; Certifications</h2>
+			<ul>
+				<li>Registered utility model <strong>ES1315071U</strong> — self-powered mechanical monitoring and predictive maintenance device.</li>
+				<li>Hackathon Datafest 2025 (Santander &amp; Talent Hackers) — real-world business challenges on large datasets using NLP and deep learning.</li>
+				<li>Project Akademia — Fundación Bankinter.</li>
+				<li>Deep Learning Course — Fundación Universidad Carlos III.</li>
+				<li>Master courses in aerodynamics, CFD and wind resource assessment — TU Delft.</li>
+			</ul>
+
 		</div>
 
-		<div class="flex flex-wrap gap-4 mt-8">
+		<!-- CTAs -->
+		<div class="flex flex-wrap gap-4 mt-10">
 			<a
 				class="btn-primary"
-				href="/cv.pdf"
+				href="/cv/CV Zee Marquez.pdf"
 				download
 				target="_blank"
 			>
@@ -60,11 +116,20 @@ import { Icon } from 'astro-icon/components'
 			</a>
 			<a
 				class="btn-secondary"
-				href="mailto:hello@zeemarquez.dev"
+				href="mailto:zeemarquez@outlook.com"
 				target="_blank"
 			>
 				Get in touch
 				<Icon height={20} name="mdi:email" />
+			</a>
+			<a
+				class="btn-secondary"
+				href="https://www.linkedin.com/in/zeemarquez"
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				LinkedIn
+				<Icon height={20} name="mdi:linkedin" />
 			</a>
 		</div>
 	</section>
