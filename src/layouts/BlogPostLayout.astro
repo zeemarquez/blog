@@ -28,6 +28,7 @@ const {
 import BaseLayout from './BaseLayout.astro'
 import { Image } from 'astro:assets'
 import { Icon } from 'astro-icon/components'
+import PostEnhancements from '../components/PostEnhancements.astro'
 
 const blogImages = import.meta.glob<{ default: ImageMetadata }>(
 	'/src/assets/blogimages/**/*.{jpeg,jpg,png,gif}'
@@ -130,4 +131,5 @@ const lastModified = dayjs(remarkPluginFrontmatter.lastModified)
 			</div>
 		</article>
 	</main>
+	<PostEnhancements />
 </BaseLayout>

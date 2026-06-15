@@ -1,0 +1,303 @@
+---
+// Client-side enhancements for blog posts:
+//  1. Mermaid diagrams that re-theme with the site's light/dark mode
+//  2. Interactive Plotly charts embedded as theme-swapping iframes
+//  3. The finmodel styled table with a floating "expand" button → modal
+---
+
+<style is:global>
+	/* ---- Mermaid ---- */
+	/* override Tailwind `prose pre` (dark code-block bg, padding, radius) */
+	.prose pre.mermaid,
+	pre.mermaid {
+		background: transparent !important;
+		color: inherit;
+		padding: 0;
+		margin: 2rem auto;
+		border: 0;
+		border-radius: 0;
+		text-align: center;
+		overflow-x: auto;
+		line-height: normal;
+	}
+	pre.mermaid:not([data-processed]) {
+		/* hide raw definition text until rendered */
+		color: transparent;
+		min-height: 120px;
+	}
+	pre.mermaid svg {
+		display: block;
+		max-width: 100%;
+		height: auto;
+		margin: 0 auto;
+		background: transparent;
+	}
+
+	/* ---- Plotly chart embeds ---- */
+	.plotly-chart {
+		margin: 2rem 0;
+		border: 1px solid var(--chart-border, #e6eaf0);
+		border-radius: 14px;
+		overflow: hidden;
+		background: #f9fafb;
+	}
+	:root.dark .plotly-chart {
+		--chart-border: #2a2f3a;
+		background: #121314;
+	}
+	/* neutralise the global `.prose iframe` rule (my-16 / w-11/12 / aspect-video) */
+	.prose .plotly-chart iframe,
+	.plotly-chart iframe,
+	.prose .model-embed iframe,
+	.model-embed iframe {
+		display: block;
+		width: 100% !important;
+		margin: 0 !important;
+		border: 0 !important;
+		border-radius: 0 !important;
+		aspect-ratio: auto !important;
+	}
+	.embed-caption {
+		margin: 0.5rem 0 0;
+		font-size: 0.9rem;
+		opacity: 0.7;
+		text-align: center;
+		font-style: italic;
+	}
+
+	/* ---- Model table embed ---- */
+	.model-embed {
+		position: relative;
+		margin: 2rem 0;
+		border: 1px solid #2a2f3a;
+		border-radius: 14px;
+		overflow: hidden;
+		background: #18181a;
+	}
+	.model-embed iframe {
+		display: block;
+		width: 100%;
+		border: 0;
+	}
+	.model-expand-btn {
+		position: absolute;
+		top: 10px;
+		right: 10px;
+		z-index: 2;
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		padding: 6px 12px;
+		font-size: 0.8rem;
+		font-weight: 600;
+		color: #e2e8f0;
+		background: rgba(40, 40, 43, 0.92);
+		border: 1px solid #3a3f4b;
+		border-radius: 8px;
+		cursor: pointer;
+		backdrop-filter: blur(4px);
+		transition: background 0.15s ease;
+	}
+	.model-expand-btn:hover {
+		background: rgba(60, 60, 66, 0.95);
+	}
+	.model-modal {
+		position: fixed;
+		inset: 0;
+		z-index: 9999;
+		display: none;
+		padding: 2.5vh 2.5vw;
+		background: rgba(8, 10, 14, 0.82);
+		backdrop-filter: blur(3px);
+	}
+	.model-modal.open {
+		display: block;
+	}
+	.model-modal-inner {
+		position: relative;
+		width: 100%;
+		height: 100%;
+		border-radius: 14px;
+		overflow: hidden;
+		background: #18181a;
+		box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+	}
+	.model-modal-inner iframe {
+		width: 100%;
+		height: 100%;
+		border: 0;
+	}
+	.model-modal-close {
+		position: absolute;
+		top: 12px;
+		right: 12px;
+		z-index: 2;
+		width: 38px;
+		height: 38px;
+		font-size: 1.2rem;
+		line-height: 1;
+		color: #e2e8f0;
+		background: rgba(40, 40, 43, 0.92);
+		border: 1px solid #3a3f4b;
+		border-radius: 9px;
+		cursor: pointer;
+	}
+	.model-modal-close:hover {
+		background: rgba(60, 60, 66, 0.95);
+	}
+</style>
+
+<script is:inline type="module">
+	const isDark = () => document.documentElement.classList.contains('dark')
+
+	/* ---------------- Mermaid ---------------- */
+	const mermaidNodes = [...document.querySelectorAll('pre.mermaid, div.mermaid')]
+	if (mermaidNodes.length) {
+		const mermaid = (
+			await import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+		).default
+
+		// preserve each diagram's source definition
+		mermaidNodes.forEach((n) => {
+			n.dataset.graph = n.textContent.trim()
+		})
+
+		// custom theme matching the blog palette (teal primary, Inter, page-matched labels)
+		const FONT = "'Inter Variable', Inter, ui-sans-serif, system-ui, sans-serif"
+		const themeVars = (dark) =>
+			dark
+				? {
+						darkMode: true,
+						background: 'transparent',
+						primaryColor: '#22323b',
+						primaryBorderColor: '#9bd4e4',
+						primaryTextColor: '#fafafa',
+						secondaryColor: '#2b2b2b',
+						tertiaryColor: '#22323b',
+						lineColor: '#8aa0ad',
+						textColor: '#fafafa',
+						edgeLabelBackground: '#2b2b2b',
+						clusterBkg: '#22323b',
+						fontFamily: FONT,
+						fontSize: '15px',
+					}
+				: {
+						darkMode: false,
+						background: 'transparent',
+						primaryColor: '#e8f3f7',
+						primaryBorderColor: '#0784b5',
+						primaryTextColor: '#0c0c0c',
+						secondaryColor: '#f1f5f9',
+						tertiaryColor: '#f8fafc',
+						lineColor: '#5b6b73',
+						textColor: '#0c0c0c',
+						edgeLabelBackground: '#ffffff',
+						clusterBkg: '#f1f5f9',
+						fontFamily: FONT,
+						fontSize: '15px',
+					}
+
+		const renderMermaid = async () => {
+			// measure with the real web font, or labels get clipped
+			if (document.fonts && document.fonts.ready) {
+				try {
+					await document.fonts.load('400 16px "Inter Variable"')
+					await document.fonts.ready
+				} catch (e) {}
+			}
+			const dark = isDark()
+			mermaid.initialize({
+				startOnLoad: false,
+				securityLevel: 'loose',
+				theme: 'base',
+				themeVariables: themeVars(dark),
+				flowchart: { curve: 'basis', htmlLabels: true, useMaxWidth: false, padding: 14 },
+				state: { useMaxWidth: false },
+			})
+			for (const n of mermaidNodes) {
+				n.removeAttribute('data-processed')
+				n.innerHTML = n.dataset.graph
+			}
+			await mermaid.run({ nodes: mermaidNodes })
+		}
+
+		await renderMermaid()
+		// re-render on theme toggle
+		let mtimer
+		new MutationObserver(() => {
+			clearTimeout(mtimer)
+			mtimer = setTimeout(renderMermaid, 60)
+		}).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+	}
+
+	/* ---------------- Plotly chart iframes ---------------- */
+	const charts = [...document.querySelectorAll('.plotly-chart[data-src]')]
+	charts.forEach((el) => {
+		const h = el.dataset.h || '440'
+		const iframe = document.createElement('iframe')
+		iframe.loading = 'lazy'
+		iframe.scrolling = 'no'
+		iframe.style.height = h + 'px'
+		iframe.title = el.dataset.title || 'Interactive chart'
+		iframe.src = `${el.dataset.src}.${isDark() ? 'dark' : 'light'}.html`
+		el.appendChild(iframe)
+		el._iframe = iframe
+	})
+
+	/* ---------------- Model table embed + modal ---------------- */
+	let modal
+	const ensureModal = () => {
+		if (modal) return modal
+		modal = document.createElement('div')
+		modal.className = 'model-modal'
+		modal.innerHTML =
+			'<div class="model-modal-inner"><button class="model-modal-close" aria-label="Close">✕</button><iframe title="Full model"></iframe></div>'
+		document.body.appendChild(modal)
+		const close = () => {
+			modal.classList.remove('open')
+			modal.querySelector('iframe').src = 'about:blank'
+		}
+		modal.querySelector('.model-modal-close').addEventListener('click', close)
+		modal.addEventListener('click', (e) => {
+			if (e.target === modal) close()
+		})
+		document.addEventListener('keydown', (e) => {
+			if (e.key === 'Escape') close()
+		})
+		return modal
+	}
+
+	const models = [...document.querySelectorAll('.model-embed[data-src]')]
+	models.forEach((el) => {
+		const h = el.dataset.h || '360'
+		const iframe = document.createElement('iframe')
+		iframe.loading = 'lazy'
+		iframe.style.height = h + 'px'
+		iframe.title = el.dataset.title || 'Model output'
+		iframe.src = el.dataset.src
+		el.appendChild(iframe)
+
+		const btn = document.createElement('button')
+		btn.className = 'model-expand-btn'
+		btn.innerHTML =
+			'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg> Expand'
+		btn.addEventListener('click', () => {
+			const m = ensureModal()
+			m.querySelector('iframe').src = el.dataset.src
+			m.classList.add('open')
+		})
+		el.appendChild(btn)
+	})
+
+	/* Plotly + model iframes react to theme toggle */
+	let ctimer
+	new MutationObserver(() => {
+		clearTimeout(ctimer)
+		ctimer = setTimeout(() => {
+			const dark = isDark()
+			charts.forEach((el) => {
+				if (el._iframe) el._iframe.src = `${el.dataset.src}.${dark ? 'dark' : 'light'}.html`
+			})
+		}, 60)
+	}).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+</script>
