@@ -17,17 +17,17 @@ To answer that you build a model. This post walks through one I built in Python 
 
 ## The asset in one paragraph
 
-The plant is 10 MW, costs about **€1.0 million per MW** to build (€10 m all-in), takes a year to construct, and then operates for **25 years**. It sells power two ways: roughly 80% of its output is locked into a fixed-price contract — a **Power Purchase Agreement (PPA)** at €40/MWh for the first 13 years — and the rest is sold at the going **merchant** market price. Panels degrade about 0.5% a year, the site is available 99% of the time, and prices and costs drift up with 2% inflation. These assumptions all live in one place in the code, which is what makes the model easy to stress-test later:
+The plant is 10 MW, costs about **€0.6 million per MW** to build (€6 m all-in), takes a year to construct, and then operates for **25 years**. It sells power two ways: roughly 80% of its output is locked into a fixed-price contract — a **Power Purchase Agreement (PPA)** at €30/MWh for the first 13 years — and the rest is sold at the going **merchant** market price. Panels degrade about 0.5% a year, the site is available 99% of the time, and the contracted price and operating costs drift up with 2% inflation. These assumptions all live in one place in the code, which is what makes the model easy to stress-test later:
 
 ```python
 inputs = Inputs(
     installed_capacity   = 10,        # MW
-    net_equivalent_hours = 1500,      # the resource — how many full-power hours/year
-    capex_per_mwp        = 1000.e3,   # €/MW
+    net_equivalent_hours = 1800,      # the resource — how many full-power hours/year
+    capex_per_mwp        = 600.e3,    # €/MW
     opex_per_year        = 100.e3,    # €/year
     ppa_production       = 0.8,       # 80% of output under contract...
-    ppa_price            = 40.0,      # ...at €40/MWh, for 13 years
-    merchant_price       = 80.0,      # the rest sold at the market price
+    ppa_price            = 30.0,      # ...at €30/MWh, for 13 years
+    merchant_price       = 40.0,      # the rest sold at the market price
     debt_tenor           = relativedelta(years=15),
     debt_dscr            = 1.25,      # the key financing constraint (more below)
     debt_interest_rate   = 0.03,
@@ -137,28 +137,28 @@ def output_irr(model):
     return float(npf.irr(returns))
 ```
 
-For the base case — 1,500 equivalent hours, an €80 merchant price — the model returns an equity IRR of about **7.7%**. On its own that number is meaningless. The interesting question is how fragile it is.
+For the base case — 1,800 equivalent hours, a €40 merchant price — the model returns an equity IRR of about **7.7%**. On its own that number is meaningless. The interesting question is how fragile it is.
 
 ## The one input nobody controls
 
-Every assumption in the model is something a developer negotiates, engineers, or contracts for — except one. You cannot negotiate with the sun. So the natural stress test is: *how do returns move as the resource moves?* I swept `net_equivalent_hours` across a realistic range — a cloudier northern site near 900 hours up to a baking-hot southern one near 2,000 — and re-solved the whole model at each point. Changing one assumption everywhere is trivial when they all live in one dataclass:
+Every assumption in the model is something a developer negotiates, engineers, or contracts for — except one. You cannot negotiate with the sun. So the natural stress test is: *how do returns move as the resource moves?* I swept `net_equivalent_hours` across a realistic range — a cloudier site near 1,000 hours up to a baking-hot southern one near 2,000 — and re-solved the whole model at each point. Changing one assumption everywhere is trivial when they all live in one dataclass:
 
 ```python
 scenarios = [replace(inputs, net_equivalent_hours=h)
-             for h in np.linspace(900, 2000, 100)]
+             for h in np.linspace(1000, 2000, 100)]
 ```
 
 The result is the signature of every infrastructure project: **operating leverage**.
 
 <div class="plotly-chart" data-src="/charts/solar-project-finance-model/sensitivity" data-h="440" data-title="Equity IRR vs. the solar resource"></div>
 
-Look at how steep that curve is. At 900 hours the equity barely clears **2.4%** — you'd have been better off in a savings account. At the 1,500-hour base case it's **7.7%**. By 2,000 hours it's **17.3%**. A third more sunshine doesn't give you a third more return; it **more than doubles** it.
+Look at how steep that curve is. At 1,000 hours the equity return is actually **negative** — about **−1.3%**, with the plant unable to reliably cover its debt and still pay equity. At the 1,800-hour base case it's **7.7%**. By 2,000 hours it's **11.5%**. Going from 1,500 to 2,000 hours — a third more sunshine — drags the IRR from under 4% to over 11%; it roughly **triples**.
 
 The reason is the fixed cost base. The capex is sunk and the debt service is contractually fixed regardless of the weather. So revenue scales with the resource, but a large slab of costs does not — and everything above that slab drops straight to the equity. It's the same mechanism that makes airlines and hotels swing so violently with demand: high fixed costs turn a modest change in the top line into a dramatic change at the bottom. For a solar plant, the "demand" is sunlight.
 
 ## Why one number isn't an answer
 
-This deterministic model is genuinely useful — it sizes the debt, prices the equity, and tells you the project's sensitivities. But it has a quiet, dangerous flaw: **it pretends the future is a single line.** It assumes the plant gets *exactly* 1,500 hours every year and sells merchant power at *exactly* €80/MWh, forever.
+This deterministic model is genuinely useful — it sizes the debt, prices the equity, and tells you the project's sensitivities. But it has a quiet, dangerous flaw: **it pretends the future is a single line.** It assumes the plant gets *exactly* 1,800 hours every year and sells merchant power at *exactly* €40/MWh, forever.
 
 Reality is not a line. Some years are cloudy. Electricity prices are volatile — and, as we'll see, midday solar prices in Spain have been doing something genuinely alarming. The honest version of the question isn't "what is the IRR?" but "what is the **distribution** of the IRR, and how much of it lives in the danger zone below my hurdle rate?"
 
@@ -168,7 +168,7 @@ Answering that properly means feeding the model thousands of plausible futures i
 
 ## Notes, assumptions & further work
 
-**Key assumptions.** 10 MW plant; €1.0 m/MWp capex (€10 m); €100 k/year opex; 1,500 net equivalent hours (base case); 99% availability; 0.5%/year degradation; 80% of output under a €40/MWh PPA for 13 years, the remainder merchant at a flat €80/MWh; 2% inflation indexation; 15-year senior debt at 3%, sized to a 1.25× DSCR (capped at 80% of capex); 25% corporate tax; annual time grid (1 construction year + 25 operating years).
+**Key assumptions.** 10 MW plant; €0.6 m/MWp capex (€6 m); €100 k/year opex; 1,800 net equivalent hours (base case); 99% availability; 0.5%/year degradation; 80% of output under a €30/MWh PPA for 13 years, the remainder merchant at a flat €40/MWh; 2% inflation on the PPA price and opex (the merchant price is held flat in nominal terms); 15-year senior debt at 3%, sized to a 1.25× DSCR; 25% corporate tax; annual time grid (1 construction year + 25 operating years).
 
 **Simplifications.** The model runs on **annual** periods, so debt-service and interest timing are approximate (a bankable model uses semi-annual or quarterly periods). Depreciation is straight-line; there is no **debt service reserve account (DSRA)**, cash sweep, or refinancing; no construction-period interest (IDC); no terminal value or decommissioning cost; merchant revenue uses a single flat price with no capture-rate or price curve; working capital and tax are treated simply (no loss carry-forwards, VAT, or DSRA funding). The resource and price are single deterministic points.
 

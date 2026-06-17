@@ -11,7 +11,7 @@ pubDate: 'Jun 14 2026'
 
 This is where the series pays off. In [Part 1](/blog/solar-project-finance-model) I built a project finance model for a solar plant that produced a single equity IRR of about 7.7%. In [Part 2](/blog/solar-resource-data) I argued that a single number is a comforting lie — the future isn't one line — and built a dataset describing how sunlight really behaves.
 
-Now I'll connect them. The plan is to learn a *probabilistic* model of the two things that drive the plant's revenue — the weather and the electricity price — simulate **a thousand different 30-year futures**, and run every single one through the project finance model. Out the other end comes not an IRR, but the **distribution** of the IRR: the expected return *and* the shape of the downside. That distribution turns out to tell a very different, and much more honest, story than 7.7%.
+Now I'll connect them. The plan is to learn a *probabilistic* model of the two things that drive the plant's revenue — the weather and the electricity price — simulate **a thousand different 30-year futures**, and run every single one through the project finance model. Out the other end comes not an IRR, but the **distribution** of the IRR: the expected return *and* the shape of the downside. That distribution turns out to tell a far more honest — and more unsettling — story than the lone 7.7% ever could.
 
 <pre class="mermaid">
 flowchart LR
@@ -82,7 +82,7 @@ Then I plotted what the plant actually captures — and this is the most importa
 
 <div class="plotly-chart" data-src="/charts/solar-monte-carlo/price-histogram" data-h="440" data-title="Captured solar-hours electricity price"></div>
 
-In Part 1 I blithely assumed an €80/MWh merchant price. The reality of midday Spanish power is brutal: a **median of about €28/MWh**, a fat spike near zero, and a meaningful number of days where the price goes **negative** — producers paying to offload power.
+In Part 1 I assumed a flat €40/MWh merchant price — already on the conservative side. But a single flat number hides everything that matters. The reality of midday Spanish power is messier than any average can convey: a **median of about €28/MWh**, a fat spike near zero, and a meaningful number of days where the price goes **negative** — producers paying to offload power.
 
 This is **solar cannibalisation**, and it's the defining economic risk of the technology. Every solar plant in a region produces at the same time — when the sun is up — and floods the midday market with near-zero-marginal-cost electricity. The very abundance that makes the resource attractive crushes the price of selling it. The sun, it turns out, was never the thing to worry about. The price of selling sunshine is.
 
@@ -112,15 +112,15 @@ Each of those runs is a complete project finance model — sized debt, sculpted 
 
 <div class="plotly-chart" data-src="/charts/solar-monte-carlo/irr-distribution" data-h="460" data-title="Distribution of equity IRR across 1,000 simulations"></div>
 
-This is what the whole pipeline was built to produce, and it lets me make a statement no single-point model can: *the expected equity IRR is about **5.0%**, almost all outcomes fall between **4.6% and 5.4%**, and the worst 10% of futures come in below roughly **4.85%**.* The centre is the expected return; the left tail is the **quantified downside** — precisely the language a lender or an investment committee needs, instead of a lone optimistic number.
+This is what the whole pipeline was built to produce, and it lets me make a statement no single-point model can: *the expected equity IRR is about **8.5%**, almost all outcomes fall between **8.1% and 9.0%**, and the worst 10% of futures come in below roughly **8.3%**.* The centre is the expected return; the left tail is the **quantified downside** — precisely the language a lender or an investment committee needs, instead of a lone optimistic number.
 
 Two findings jump out, and both are the kind of thing the deterministic model could never have told me.
 
-**First: the expected return is well below Part 1's headline — and the sun isn't why.** The simulated site is actually *sunnier* than the Part 1 base case (around 1,800 equivalent hours a year versus 1,500), which on its own should *raise* the IRR. Yet the expected return fell from 7.7% to ~5.0%. The entire gap is the **price**: swapping the fantasy flat €80/MWh for the real ~€28 median capture price guts the merchant revenue. The lesson is bracing — a project's return is hostage to its *weakest* assumption, and a confident-looking deterministic model is dangerous precisely because it hides which assumption that is.
+**First: the expected return lands a touch *above* Part 1's headline — and the reason should make you nervous, not relieved.** The simulated site sees almost exactly the same sunshine as the Part 1 base case (around 1,820 equivalent hours a year versus 1,800), so the resource isn't what's moving the answer. The price is — but not in the direction you'd guess. The realistic captured price *averages* about €42/MWh, marginally above Part 1's flat €40 assumption, which is enough to nudge the expected IRR from 7.7% up to ~8.5%. (Solve the deterministic model at the simulated mean inputs — ~1,820 hours, €42 — and it returns 8.5% on the nose; the Monte Carlo centre is no mystery.) But that comfortable €42 *average* is a mirage of central tendency. The **median** captured price is just **~€28/MWh**: half of all days earn that or less, and the average is hauled up by a thin tail of high-scarcity-price days. The flat €40 wasn't wrong about the mean — it was blind to the *shape*, and the shape is the entire risk story (more on that below).
 
 **Second: the distribution is astonishingly *tight*.** A spread of barely ±0.4 percentage points across a thousand futures is far narrower than people expect from "weather risk". Why so calm?
 
-<div class="plotly-chart" data-src="/charts/solar-monte-carlo/irr-scatter" data-h="420" data-title="IRR vs lifetime equivalent hours"></div>
+<div class="plotly-chart" data-src="/charts/solar-monte-carlo/irr-scatter" data-h="420" data-title="IRR vs mean annual equivalent hours"></div>
 
 Because of **diversification across time**. A solar plant doesn't live or die by one year — it averages weather over 25 of them. A single cloudy month barely moves a 25-year IRR, and at a consistently sunny site there isn't much year-to-year resource variance to begin with. Annual weather noise, played out over the asset's life, largely **averages away** — the law of large numbers, doing its quiet work. The scatter confirms it: more sun does lift returns (the band slopes up), but the band is thin.
 
@@ -128,7 +128,7 @@ The real conclusion is a shift in *where the risk lives*. For this asset, year-t
 
 ## What the three numbers taught me
 
-The series walked one project finance model through three levels of honesty. Part 1 said *"the IRR is 7.7%"* — clean, precise, and quietly fictional. Part 2 measured the real world the model was pretending to know. Part 3 replaced the fiction with a thousand data-grounded futures and produced *"the IRR is centred near 5%, it's remarkably stable to weather, and the thing that should actually worry you is the price of midday power."*
+The series walked one project finance model through three levels of honesty. Part 1 said *"the IRR is 7.7%"* — a clean point estimate that, it turns out, was roughly right on average but utterly silent about the risk around it. Part 2 measured the real world the model was pretending to know. Part 3 replaced the point with a thousand data-grounded futures and produced *"the IRR is centred near 8.5%, it's remarkably stable to weather, and the thing that should actually worry you is the price of midday power — whose comfortable €42 average hides a €28 median and a tail that cannibalisation will keep thinning."*
 
 That last sentence is worth more than the first, even though it's less comfortable — because it's the difference between a number and an understanding of the risk behind it. Building the machine that gets you there — the cash-flow waterfall, the Markov weather, the Monte Carlo engine — is, to me, where engineering and finance turn out to be the same discipline wearing different clothes.
 

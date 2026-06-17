@@ -9,7 +9,7 @@ pubDate: 'Jun 08 2026'
 > **Part 2 · How Much Sun?** (this post) ·
 > [Part 3 · A Thousand Futures](/blog/solar-monte-carlo)
 
-In [Part 1](/blog/solar-project-finance-model) I built a project finance model for a solar plant and found its returns hang almost entirely on one number: the **resource** — how much sunlight the site actually receives. The model treated that as a fixed assumption: 1,500 equivalent hours, every year, forever.
+In [Part 1](/blog/solar-project-finance-model) I built a project finance model for a solar plant and found its returns hang almost entirely on one number: the **resource** — how much sunlight the site actually receives. The model treated that as a fixed assumption: 1,800 equivalent hours, every year, forever.
 
 The whole point of this series is to stop pretending. To replace that single number with an honest *range* of possibilities, I need to understand how sunlight really behaves at a real location — not just its average, but its **variability** (how much it swings) and its **persistence** (whether bad days cluster together). And before you can model something, you have to measure it. This post is about building that measurement.
 
