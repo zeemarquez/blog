@@ -1,7 +1,7 @@
 ---
 title: 'Finite Element Method'
 description: 'An introduction to the Finite Element Method (FEM) and how to implement it in Python for 2D structural analysis, from mesh generation to stress visualization.'
-pubDate: 'Dec 07 2022'
+pubDate: 'Dec 07 2021'
 ---
 
 The finite element method is a numerical technique used to solve complex engineering and physical problems. It is a powerful tool that allows for the accurate prediction of the behavior of a system under a wide range of conditions, making it an essential tool for engineers and scientists working in fields such as structural analysis, fluid dynamics, and electromagnetics.
