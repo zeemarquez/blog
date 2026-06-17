@@ -90,7 +90,7 @@ The only change to the Part 1 model is that two scalar inputs (resource and merc
 
 This is what the whole pipeline was built to produce, and it lets me make a statement no single-point model can: *the expected equity IRR is about **8.5%**, almost all outcomes fall between **8.1% and 9.0%**, and the worst 10% of futures come in below roughly **8.3%**.* The centre is the expected return; the left tail is the **quantified downside**, precisely the language a lender or an investment committee needs, instead of a lone optimistic number.
 
-In the exceedance language a financing desk actually uses (a **P90** is the return beaten in 90% of futures, i.e. a downside figure, not an average), the distribution reads:
+ What a projet like this really cares about to asses risk are the P50, P90 and P99 values. A **P90** is the return beaten in 90% of futures, i.e. a downside figure, not an average, the distribution reads:
 
 | Exceedance level | Equity IRR |
 | --- | --- |
